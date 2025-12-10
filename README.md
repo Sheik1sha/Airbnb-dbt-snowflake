@@ -17,7 +17,6 @@ The pipeline covers the full lifecycle:
 ![Architecture](architecture/Airbnb_Archietecture.png)
 
 ![Architecture](architecture/Pipeline_Architecture.png)
-.png)
 
 ### High-Level Flow  
 1. Airbnb CSV files land in **AWS S3**  
@@ -102,11 +101,43 @@ Dagster controls **when dbt runs**, while dbt controls **how transformations are
 
 Power BI connects directly to the **Snowflake Analytics Layer**.
 
-### Example Insights:
-- Listing availability by neighborhood  
-- Host performance and superhost trends  
-- Review volume over time  
-- Minimum nights distribution  
+## 📊 Dashboard Previews
+
+### 🟩 Airbnb Listings and Review Performance Overview
+![Listings Overview Dashboard](dashboards/listings_review_overview.png)
+
+A high-level analytical overview of Airbnb listings, review volume, sentiment distribution, and long-term review trends.
+
+**Key Highlights:**
+- Interactive filters for Room Type, Host Type, Full Moon, and Review Period  
+- KPIs: Total Listings, Total Reviews, Average Price, Positive Review Percentage  
+- Listings by Room Type  
+- Review Volume: Full Moon vs Regular Days  
+- Listings by Host Type (Superhost vs Regular Host)  
+- Review Sentiment Breakdown (Positive, Neutral, Negative)  
+- Review Trend Over Time  
+
+--- 
+
+### 🟦 Host and Pricing Performance Analysis
+![Host Pricing Dashboard](dashboards/host_pricing_analysis.png)
+
+This dashboard provides insights into how hosts price their listings and how reviews vary across different hosts and room types.
+
+**Key Highlights:**
+- Total Listings by Host Name  
+- Average Price by Host Type (Superhost vs Regular Host)  
+- Average Price by Room Type  
+- Top Hosts by Total Reviews  
+- Listing-level details including:  
+  - Room type  
+  - Price  
+  - Total reviews  
+  - Positive review percentage  
+
+---
+
+
 
 ---
 
