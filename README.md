@@ -14,7 +14,10 @@ The pipeline covers the full lifecycle:
 ---
 
 ## 🧩 Architecture  
-![Architecture](architecture/airbnb_architecture.png)
+![Architecture](architecture/Airbnb_Archietecture.png)
+
+![Architecture](architecture/Pipeline_Architecture.png)
+.png)
 
 ### High-Level Flow  
 1. Airbnb CSV files land in **AWS S3**  
