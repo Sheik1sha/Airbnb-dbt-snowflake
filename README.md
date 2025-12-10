@@ -86,6 +86,8 @@ These tests ensure:
 
 ## ⏱️ Orchestration with Dagster  
 
+![Dagster Orchestration](Dagster/dagster.png)
+
 Dagster is used for:
 
 - Scheduling dbt runs  
@@ -136,7 +138,6 @@ This dashboard provides insights into how hosts price their listings and how rev
   - Positive review percentage  
 
 ---
-
 
 
 ---
