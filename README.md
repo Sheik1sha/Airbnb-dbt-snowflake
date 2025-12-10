@@ -192,6 +192,8 @@ The dataset includes:
 
 ## 📁 Repository Structure  
 
+## 📁 Repository Structure
+
 ```text
 ├── analyses/
 ├── assets/
@@ -205,6 +207,12 @@ The dataset includes:
 ├── tests/
 ├── architecture/
 │   └── airbnb_architecture.png
+├── dashboards/
+│   ├── host_pricing_analysis.png
+│   └── listings_review_overview.png
+├── dagster/
+│   └── dagster_pipeline.png
 ├── dbt_project.yml
 ├── packages.yml
 └── README.md
+
