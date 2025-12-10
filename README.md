@@ -29,59 +29,131 @@ The pipeline covers the full lifecycle:
 
 ## ⚙️ Data Ingestion Pipeline (AWS S3 → Snowflake)
 
-### 🔹 Ingestion Mechanism  
-- **Source:** AWS S3  
-- **Target:** Snowflake Raw Layer  
-- **Method:**  
-  - Snowflake External Stage  
-  - Snowpipe or manual COPY INTO  
+**Source**
+- AWS S3 bucket:
+  - `listings.csv`
+  - `hosts.csv`
+  - `reviews.csv`
 
-This enables scalable, cloud-native ingestion without intermediate compute.
+**Target**
+- Snowflake database: `AIRBNB`
+- Schema: `RAW`
+  - `RAW_LISTINGS`
+  - `RAW_HOSTS`
+  - `RAW_REVIEWS`
+
+**Ingestion Method**
+- Snowflake `COPY INTO` commands reading directly from S3
+- In a production setup, this can be extended to:
+  - External stages
+  - Snowpipe for continuous ingestion
+
+The RAW layer stores data exactly as received with no transformations applied.
+
+---
+## 🧱 Data Transformation & Modeling (dbt + Snowflake)
+
+All transformations are implemented using **dbt**, executed directly inside Snowflake.
 
 ---
 
-## 🔁 Data Transformation and Modeling (dbt)
+### 🔹 Staging Models (src_)
 
-All transformations are implemented using **dbt running directly inside Snowflake**.
+These models standardize column names and data types from RAW tables.
 
-### 🔹 dbt Modeling Layers  
-- **Staging Models (src_)**
-  - `src_listings`  
-  - `src_hosts`  
-  - `src_reviews`  
+- `src_listings`
+- `src_hosts`
+- `src_reviews`
 
-- **Core Models**
-  - `dim_listings_cleaned`  
-  - `dim_hosts_cleansed`  
-  - `fct_reviews` (incremental model)  
-
----
-
-## 🔄 Incremental Processing  
-
-The **fact reviews table** is built using:
-- Surrogate keys  
-- Incremental filtering on `review_date`  
-- Efficient delta loading instead of full refreshes  
+Responsibilities:
+- Column renaming
+- Type casting
+- Basic filtering
+- Preparing clean inputs for downstream models
 
 ---
 
-## ✅ Data Quality and Testing  
+### 🔹 Core Dimension & Fact Models
 
-The following **dbt tests** are implemented:
+#### Dimensions
+- `dim_listings_cleaned`  
+  Cleaned Airbnb listings with data quality rules applied
+
+- `dim_hosts_cleansed`  
+  Cleaned host attributes with enforced contracts and standardized flags
+
+- `dim_listings_w_hosts`  
+  Joined dimension combining listings and host attributes  
+  Used as the primary dimension table for BI
+
+#### Fact
+- `fct_reviews`  
+  Incremental fact table for reviews
+  - Uses surrogate keys generated from:
+    - `listing_id`
+    - `review_date`
+    - `reviewer_name`
+    - `review_text`
+  - Filters out null review text
+  - Incrementally loads only new records using `review_date`
+  - Supports optional `start_date` and `end_date` dbt variables
+  - `on_schema_change = 'fail'` to prevent silent schema drift
+
+---
+
+### 🔹 Mart Layer
+
+- `mart_fullmoon_reviews`  
+  Joins `fct_reviews` with a seeded full moon calendar table
+  - Adds `is_full_moon` flag
+  - Enables behavioral analysis of reviews during full moon vs regular days
+  - Used directly by Power BI
+
+---
+
+## 🔁 Incremental Processing Strategy
+
+The `fct_reviews` model uses dbt incremental materialization:
+
+- Loads only records where:
+  - `review_date > max(review_date)` in the target table  
+  - Or within a configurable `start_date` and `end_date` window
+- Prevents full table reloads
+- Improves performance and reduces compute cost
+- Validated using controlled Snowflake insert testing
+
+
+---
+
+## ✅ Data Quality & Testing (dbt)
+
+The following dbt tests are implemented:
 
 - `unique`  
+  Enforced on primary keys (`review_id`, `listing_id`, `host_id`)
+
 - `not_null`  
+  Applied to all critical identifier fields
+
 - `relationships`  
+  Ensures referential integrity between:
+  - `fct_reviews.listing_id` → `dim_listings_cleaned.listing_id`
+
 - `accepted_values`  
+  Validates controlled fields like `room_type`
+
 - `positive_values`  
+  Ensures numeric fields such as `minimum_nights` are greater than zero
+
+- **Source Freshness Tests**
+  - Applied to `src_reviews`
+  - Warn and error thresholds defined to monitor data latency
 
 These tests ensure:
-- Primary key integrity  
-- Referential consistency  
-- No invalid or negative values  
-- Clean analytics-ready datasets  
-
+- Clean joins
+- No orphan records
+- No invalid dimensions
+- Analytics-ready data for BI consumption
 ---
 
 ## ⏱️ Orchestration with Dagster  
@@ -189,8 +261,6 @@ The dataset includes:
 - **Analytics-ready Power BI reporting**  
 
 ---
-
-## 📁 Repository Structure  
 
 ## 📁 Repository Structure
 
