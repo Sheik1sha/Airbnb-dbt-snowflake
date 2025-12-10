@@ -104,7 +104,7 @@ Power BI connects directly to the **Snowflake Analytics Layer**.
 ## 📊 Dashboard Previews
 
 ### 🟩 Airbnb Listings and Review Performance Overview
-![Listings Overview Dashboard](dashboards/listings_review_overview.png)
+![Listings Overview Dashboard](Dashboards/listings_review_overview.png)
 
 A high-level analytical overview of Airbnb listings, review volume, sentiment distribution, and long-term review trends.
 
@@ -120,7 +120,7 @@ A high-level analytical overview of Airbnb listings, review volume, sentiment di
 --- 
 
 ### 🟦 Host and Pricing Performance Analysis
-![Host Pricing Dashboard](dashboards/host_pricing_analysis.png)
+![Host Pricing Dashboard](Dashboards/host_pricing_analysis.png)
 
 This dashboard provides insights into how hosts price their listings and how reviews vary across different hosts and room types.
 
